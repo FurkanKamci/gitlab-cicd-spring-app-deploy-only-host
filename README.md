@@ -1,5 +1,5 @@
 ------
 
-Gitlab Runner executor : docker
+Gitlab runner executor : docker
 
 ------
