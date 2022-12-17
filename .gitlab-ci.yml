@@ -8,4 +8,5 @@ trigger_dev:
   rules:
     # Triggered only when push, commit or merge request event come
     - if: $CI_COMMIT_BRANCH == "dev" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "dev"
-      when: manual
+      #when: manual
+      when: always
