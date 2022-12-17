@@ -1,0 +1,43 @@
+
+stages:
+  - build
+  - deploy
+
+variables:
+  APP_ENV: "dev"
+#--------------------------------#
+spring_build:
+  stage: build
+  # Build aşaması
+  image: maven:3-openjdk-18-slim
+  script:
+    - mvn clean package
+    - cp target/spring-app-0.0.1-SNAPSHOT.jar target/spring-app-${CI_PIPELINE_IID}.jar
+
+  # Nereye kopyalanacağı ve ne build çıktısının ne kadar süre saklanacağını belirttiğimiz bölüm
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - target/spring-app-${CI_PIPELINE_IID}.jar
+#--------------------------------#
+spring_deploy:
+  stage: deploy
+  needs: [react_build]
+  image: alpine
+
+  script:
+    - apk add --no-cache rsync openssh
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_HOST_SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
+    - chmod 600 ~/.ssh/id_dsa
+    - ssh-keyscan -t ecdsa 192.168.230.134 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    - scp target/spring-app-${CI_PIPELINE_IID}.jar spring-demo-user@192.168.230.134:/home/spring-demo-user/spring-project
+
+    - ssh spring-demo-user@192.168.230.134 "
+      cd spring-project/;
+      pwd;
+      ./update.sh
+      "
