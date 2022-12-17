@@ -22,7 +22,7 @@ spring_build:
 #--------------------------------#
 spring_deploy:
   stage: deploy
-  needs: [react_build]
+  needs: [spring_build]
   image: alpine
 
   script:
