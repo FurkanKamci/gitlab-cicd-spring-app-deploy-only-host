@@ -9,7 +9,7 @@ variables:
 spring_build:
   stage: build
   # Build aşaması
-  image: maven:3-openjdk-18-slim
+  image: maven:3.8.6-eclipse-temurin-17-alpine
   script:
     - mvn clean package
     - cp target/spring-app-0.0.1-SNAPSHOT.jar target/spring-app-${CI_PIPELINE_IID}.jar
