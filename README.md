@@ -4,6 +4,12 @@ Gitlab runner executor : docker
 
 ------
 
+- Sadece build jar 'ımızı oluşturup sunucumuza copyalayaladıktan sonra. Update.sh gibi bir scipt ile (Ansible de kullanılabilir.) sunucularımızı güncellemek istersek ana sizinde bulunan .gitlab-ci dosyasının içerisindeki. İnclude keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci isimli dosyayı seçmemiz yeterli.
+
+- Docker image ı kullanmak istiyorsak. Ana sizinde bulunan .gitlab-ci dosyasının içerisindeki. İnclude keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci isimli dosyayı seçmemiz yeterli. Update.sh kısmı duruma göre düzenlenebilir.
+
+------
+
 Docker Repository için lazım olan değişkenler : 
 
  - HARBOR_REGISTRY_USER  : Harbor_user eklenecek veya projemizin özelinde oluşturduğumuz harbor robotunun bilgileri eklenecek.
