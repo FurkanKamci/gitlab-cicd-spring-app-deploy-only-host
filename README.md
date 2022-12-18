@@ -23,7 +23,7 @@ Deploy işlemlerini gerçekleştireceğimiz sunucumuz için lazım olan değişk
 
  - DEPLOY_HOST_SSH_PRIVATE_KEY : id_ed25519 dosyasının içerisini ekleriz. 
 
-  Gitlab çalışması için docker executor da çalışması için sadece ed25519 formatını destekliyor.
+  Gitlab runnerın docker executor da çalışması için ed25519 formatını destekler.
 
    - ssh-keygen -t ed25519  → SSH key oluşturur  /home/.ssh/ id_ed25519 ve id_ed25519.pub dosyalarını oluşturur.
 
