@@ -16,7 +16,7 @@ Docker Repository için lazım olan değişkenler :
 
  - HARBOR_NAMESPACE : Harbor un içerisinde projemize özel oluşturduğumuz repository nin ismini ekliyoruz.
 
-  Not : Bu değişkenlerin içeriği sizin kullanmış olduğunuz docker repository nize göre değişebilir.
+  Not : Bu değişkenlerin içeriği sizin kullanmış olduğunuz docker repository nize göre değişir.
 
 ---
 Deploy işlemlerini gerçekleştireceğimiz sunucumuz için lazım olan değişken ve SSH key oluşturma :
