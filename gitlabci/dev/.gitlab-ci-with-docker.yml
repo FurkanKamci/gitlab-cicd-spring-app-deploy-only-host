@@ -8,7 +8,8 @@ variables:
   TAG: $HARBOR_REGISTRY_TAG/$HARBOR_NAMESPACE/$APP_NAME
 
 stages:
-  - spring_build_dev
+  - build_dev
+  - deploy_dev
 
 spring_build_dev:
   image: docker
@@ -16,7 +17,7 @@ spring_build_dev:
     - name: docker:20-dind
       alias: docker
 
-  stage: spring_build_dev
+  stage: build_dev
 
   before_script:
     - echo "Harbor Login"
@@ -35,22 +36,22 @@ spring_build_dev:
     - docker rmi --force $(docker images -q "$TAG" | uniq)
     - docker rmi `docker images | grep "<none>" | awk {'print $3'}`
 #--------------------------------#
-#spring_deploy_dev:
-#  stage: deploy
-#  needs: [spring_build_dev]
-#  image: alpine
-#
-#  script:
-#    - apk add --no-cache rsync openssh
-#    - mkdir -p ~/.ssh
-#    - echo "$DEPLOY_HOST_SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
-#    - chmod 600 ~/.ssh/id_dsa
-#    - ssh-keyscan -t ecdsa 192.168.230.134 >> ~/.ssh/known_hosts
-#    - chmod 644 ~/.ssh/known_hosts
-#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-#
-#    - ssh spring-demo-user@192.168.230.134 "
-#      cd spring-docker-project/;
-#      pwd;
-#      ./update.sh
-#      "
+spring_deploy_dev:
+  stage: deploy_dev
+  needs: [spring_build_dev]
+  image: alpine
+
+  script:
+    - apk add --no-cache rsync openssh
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_HOST_SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
+    - chmod 600 ~/.ssh/id_dsa
+    - ssh-keyscan -t ecdsa 192.168.230.134 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    - ssh spring-demo-user@192.168.230.134 "
+      cd spring-docker-project/;
+      pwd;
+      ./update.sh
+      "
