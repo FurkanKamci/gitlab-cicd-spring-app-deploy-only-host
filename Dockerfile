@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 # Compile and package the application to an executable JAR
-RUN mvn clean package
+RUN mvn package
 
 # For Java 17
 FROM openjdk:17-alpine
