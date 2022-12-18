@@ -4,10 +4,10 @@ Gitlab runner executor : docker
 
 ------
 Deploy Only Hosts :
-- Ana sizinde bulunan .gitlab-ci dosyasının. İçerisindeki include keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci.yml isimli dosyayı seçmemiz yeterli. Bu aşamada sadece build jar 'ımızı oluşturup sunucumuza copyalayalanır. Sunucular Update.sh gibi bir scipt ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
+- Ana sizinde bulunan .gitlab-ci dosyasının içerisindeki include keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci.yml isimli dosyayı seçmemiz yeterli. Bu aşamada sadece build jar 'ımızı oluşturup sunucumuza copyalayalanır. Sunucular Update.sh gibi bir scipt ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
 
 Deploy Docker Hosts :
-- Docker image ları kullanmak istiyorsak. Ana sizinde bulunan .gitlab-ci dosyasının. İçerisindeki include keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci-with-docker.yml isimli dosyayı seçmemiz yeterli. Sunucular Update.sh gibi bir scipt ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
+- Docker image ları kullanmak istiyorsak. Ana sizinde bulunan .gitlab-ci dosyasının içerisindeki include keyword 'ünde dev klasörümüzün içerisindeki .gitlab-ci-with-docker.yml isimli dosyayı seçmemiz yeterli. Sunucular Update.sh gibi bir scipt ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
 
 ------
 
