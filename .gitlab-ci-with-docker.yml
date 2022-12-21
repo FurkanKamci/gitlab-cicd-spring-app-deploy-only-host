@@ -1,3 +1,4 @@
+#---------------------------------------#
 stages:
   - build
   - deploy
@@ -6,24 +7,36 @@ stages:
 #------------Build Template-------------#
 .build: &build
   stage: build
-  # Build aşaması
-  image: maven:3.8.6-eclipse-temurin-17-alpine
+
+  image: docker
+
+  services:
+    - name: docker:20-dind
+      alias: docker
+
+  before_script:
+    - echo "Harbor Login"
+    - docker login --username $HARBOR_REGISTRY_USER --password $HARBOR_REGISTRY_USER_PASSWORD $HARBOR_REGISTRY
+
   script:
-    - mvn clean package
-    - cp target/spring-app-0.0.1-SNAPSHOT.jar target/spring-app-${APP_NAME}-${CI_PIPELINE_IID}.jar
- 
-  # Nereye kopyalanacağı ve ne build çıktısının ne kadar süre saklanacağını belirttiğimiz bölüm
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - target/spring-app-${APP_NAME}-${CI_PIPELINE_IID}.jar
- 
+    - echo "Dockerfile Build"
+    - docker build --no-cache --tag $TAG:$CI_PIPELINE_IID .
+    - docker tag $TAG:$CI_PIPELINE_IID $TAG:latest
+
+    - echo "Harbor Push"
+    - docker push $TAG:$CI_PIPELINE_IID
+    - docker push $TAG:latest
+
+    - echo "Clean"
+    - docker rmi --force $(docker images -q "$TAG" | uniq)
+    - docker rmi `docker images | grep "<none>" | awk {'print $3'}`
+
 #------------Deploy Template--------------#
 .deploy: &deploy
   stage: deploy
   image: alpine
   script:
-    - apk add --no-cache rsync openssh
+    - apk add --no-cache openssh
     - mkdir -p ~/.ssh
     - echo "$DEPLOY_HOST_SSH_PRIVATE_KEY" >> ~/.ssh/id_dsa
     - chmod 600 ~/.ssh/id_dsa
@@ -31,10 +44,8 @@ stages:
     - chmod 644 ~/.ssh/known_hosts
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
  
-    - scp target/spring-app-${APP_NAME}-${CI_PIPELINE_IID}.jar spring-demo-user@192.168.230.134:/home/spring-demo-user/spring-project
- 
     - ssh spring-demo-user@192.168.230.134 "
-      cd spring-project/;
+      cd spring-docker-project/;
       pwd;
       ./update.sh"
 #----------------------------------#
@@ -48,7 +59,11 @@ BuildToDev:
     - preprod
     - prod
   variables:
-    APP_NAME: dev
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    GIT_SSL_NO_VERIFY: "1"
+    APP_NAME: spring-app-docker-dev
+    TAG: $HARBOR_REGISTRY_TAG/$HARBOR_NAMESPACE/$APP_NAME
   <<: *build
 #--
 DeployToDev:
@@ -58,8 +73,6 @@ DeployToDev:
   except:
     - preprod
     - prod
-  variables:
-    APP_NAME: dev
   needs: [BuildToDev]
   <<: *deploy
 #--------------------------------------#
@@ -74,7 +87,11 @@ BuildToPreprod:
     - main
     - prod
   variables:
-    APP_NAME: preprod
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    GIT_SSL_NO_VERIFY: "1"
+    APP_NAME: spring-app-docker-preprod
+    TAG: $HARBOR_REGISTRY_TAG/$HARBOR_NAMESPACE/$APP_NAME
   <<: *build
 #--
 DeployToPreprod:
@@ -84,8 +101,6 @@ DeployToPreprod:
   except:
     - main
     - prod
-  variables:
-    APP_NAME: preprod
   needs: [BuildToPreprod]
   <<: *deploy
 #--------------------------------------#
@@ -100,7 +115,11 @@ BuildToProd:
     - main
     - preprod
   variables:
-    APP_NAME: prod
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    GIT_SSL_NO_VERIFY: "1"
+    APP_NAME: spring-app-docker-prod
+    TAG: $HARBOR_REGISTRY_TAG/$HARBOR_NAMESPACE/$APP_NAME
   <<: *build
 #--
 DeployToProd:
@@ -110,8 +129,6 @@ DeployToProd:
   except:
     - main
     - preprod
-  variables:
-    APP_NAME: prod
   needs: [BuildToProd]
   <<: *deploy
 #--------------------------------------#
