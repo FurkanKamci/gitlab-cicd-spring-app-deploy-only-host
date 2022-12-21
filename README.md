@@ -3,12 +3,14 @@
 Gitlab runner executor : docker
 
 ------
+Başlamadan Önce:
+- Yml dosyaları sadece dev, preprod ve prod branch lerine tepki verecek şekilde düzenlenmiştir. Eğer tetiklemek isterseniz bu branch leri oluşturmanız gerekmektedir.
+
 Deploy Only Hosts :
-- Ana sizinde bulunan .gitlab-ci dosyasının içerisindeki include keyword 'üne dev klasörümüzün içerisindeki .gitlab-ci.yml isimli dosyayı seçmemiz yeterli. Bu aşamada sadece build jar 'ımızı oluşturup sunucumuza kopyalayalanır. Sunucular Update.sh gibi bir script ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
+- Ana sizinde bulunan .gitlab-ci.yml dosyasında only host ayarları bulunmaktadır. İstenirse private bir script veya ansible kullanılarak birden çok sunucuya dağıtılabilir.
 
 Deploy Docker Hosts :
-- Docker image ları kullanmak istiyorsak. Ana sizinde bulunan .gitlab-ci dosyasının içerisindeki include keyword 'üne dev klasörümüzün içerisindeki .gitlab-ci-with-docker.yml isimli dosyayı seçmemiz yeterli. Sunucular Update.sh gibi bir script ile (Ansible da kullanılabilir.) istenildiği gibi güncellenebilir.
-
+- Docker image ları kullanmak istiyorsak. Ana sizinde bulunan .gitlab-ci-with-docker.yml dosyasının ismini .gitlab-ci.yml ile değiştirebiliriz.
 ------
 
 Docker Repository için lazım olan değişkenler : 
